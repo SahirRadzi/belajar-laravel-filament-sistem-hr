@@ -39,8 +39,8 @@ class UserResource extends Resource
                     ->numeric()
                     ->maxValue('12')
                     ->helperText(New HtmlString('* Tanpa (-) <strong>Contoh: 931104086159</strong>')),
-                ])->columns(2),
-                Forms\Components\DatePicker::make('dob')
+
+                    Forms\Components\DatePicker::make('dob')
                     ->label('Tarikh Lahir'),
 
                 Forms\Components\Select::make('gender')
@@ -65,6 +65,8 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('state')
                     ->label('Negeri')
                     ->maxLength(255),
+                ])->columns(2),
+
 
                 Forms\Components\Section::make('Tetapan Pegawai')
                     ->description('Tetapan akaun pegawai.')
