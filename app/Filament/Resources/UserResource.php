@@ -5,14 +5,17 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -37,11 +40,36 @@ class UserResource extends Resource
                     ->placeholder('sila masukkan no ic anda')
                     ->required()
                     ->numeric()
-                    ->maxValue('12')
-                    ->helperText(New HtmlString('* Tanpa (-) <strong>Contoh: 931104086159</strong>')),
+                    ->helperText(New HtmlString('* Tanpa (-) <strong>Contoh: 931104086159</strong>'))
+                    ->live(debounce: 1500)
+                    ->hintAction(
+                        Forms\Components\Actions\Action::make('generate')
+                            ->label('Auto isi tarikh lahir & jantina')
+                            ->icon('heroicon-m-clipboard')
+                            ->action(function (Set $set, $state, ?Model $record){
+                                $birthday = static::extractBirthday($state);
+                                $set('dob',$birthday);
+                                $set('gender', static::genderFromKP($state));
+                                $set('password',$state);
+
+                                Notification::make()
+                                    ->title('Maklumat telah disalin')
+                                    ->success()
+                                    ->send();
+
+                            })
+                    )->maxLength(12),
 
                     Forms\Components\DatePicker::make('dob')
-                    ->label('Tarikh Lahir'),
+                    ->live(onBlur: true)
+                    ->label('Tarikh Lahir')
+                    ->helperText(function ($state){
+                        return \Carbon\Carbon::parse($state)->diffForHumans([
+                            'parts' => 2,
+                            'join' => true,
+                            'skip' => 'week',
+                        ]);
+                    }),
 
                 Forms\Components\Select::make('gender')
                     ->label('Jantina')
@@ -61,7 +89,8 @@ class UserResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('postcode')
                     ->label('Poskod')
-                    ->numeric(),
+                    ->numeric()
+                    ->maxLength(5),
                 Forms\Components\TextInput::make('state')
                     ->label('Negeri')
                     ->maxLength(255),
@@ -74,7 +103,8 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('email')
                         ->email()
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->prefixIcon('heroicon-m-envelope'),
                     Forms\Components\TextInput::make('password')
                         ->password()
                         ->required()
@@ -155,5 +185,43 @@ class UserResource extends Resource
             'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function extractBirthday($number)
+    {
+        // Extract the first six digits
+        $year = substr($number, 0, 2); // e.g. 93
+        $month = substr($number, 2, 2); // e.g. 11
+        $day = substr($number, 4, 2); // e.g. 04
+
+        // Determine the century of the year
+        $currentYear = date('Y');
+        $currentCentury = intval(substr($currentYear, 0, 2)) * 100;
+
+        // If the extracted year is greater than the last 2 digits of the current year, it's from 1900s
+        $fullYear = $year > substr($currentYear, 2, 2)
+            ? ($currentCentury - 100) + intval($year) // 1900s
+            : $currentCentury + intval($year);        // 2000s
+
+        // Validate the date, if it's not a valid date return null
+        if(!checkdate(intval($month), intval($day), $fullYear)) {
+            return null;
+        }
+
+        // Create and return the formatted date if valid
+        return sprintf('%04d-%02d-%02d', $fullYear, $month, $day);
+    }
+
+    private static function genderFromKP($id)
+    {
+        // Get the last digits of the ID
+        $lastDigit = (int) substr($id, -1); // Cast to integer
+
+        // Check if the last digit is odd or even number
+        if($lastDigit % 2 == 0){
+            return 'wanita'; //wanita
+        }else{
+            return 'lelaki'; //lelaki
+        }
     }
 }
