@@ -40,7 +40,7 @@ class UserResource extends Resource
                     ->placeholder('sila masukkan no ic anda')
                     ->required()
                     ->numeric()
-                    ->helperText(New HtmlString('* Tanpa (-) <strong>Contoh: 931104086159</strong>'))
+                    ->helperText(New HtmlString('* Tanpa (-) <strong>Contoh: 831104086159</strong>'))
                     ->live(debounce: 1500)
                     ->hintAction(
                         Forms\Components\Actions\Action::make('generate')
@@ -50,7 +50,6 @@ class UserResource extends Resource
                                 $birthday = static::extractBirthday($state);
                                 $set('dob',$birthday);
                                 $set('gender', static::genderFromKP($state));
-                                $set('password',$state);
 
                                 Notification::make()
                                     ->title('Maklumat telah disalin')
@@ -58,7 +57,8 @@ class UserResource extends Resource
                                     ->send();
 
                             })
-                    )->maxLength(12),
+                    )
+                    ->maxLength(12),
 
                     Forms\Components\DatePicker::make('dob')
                     ->live(onBlur: true)
@@ -122,7 +122,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nric')
-                    ->numeric()
+                    ->label('NRIC')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),

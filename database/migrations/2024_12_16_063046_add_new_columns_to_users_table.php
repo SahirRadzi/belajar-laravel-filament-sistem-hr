@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('nric')->after('email');
+            $table->string('nric')->unique()->after('email');
             $table->string('phone')->after('nric');
             $table->string('gender')->nullable()->after('phone');
             $table->date('dob')->nullable()->after('gender');
             $table->string('address')->nullable()->after('dob');
-            $table->integer('postcode')->nullable()->after('address');
+            $table->string('postcode')->nullable()->after('address');
             $table->string('state')->nullable()->after('postcode');
         });
     }

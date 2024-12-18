@@ -1,0 +1,48 @@
+@import "/vendor/filament/filament/resources/css/theme.css";
+
+@config 'tailwind.config.js';
+
+.fi-simple-main {
+    @apply bg-transparent shadow-none border-none ring-0;
+}
+
+/* .fi-input, .fi-select-input,.choices{
+	@apply bg-gray-100;
+} */
+
+/* sidebar background color */
+.fi-sidebar-nav,
+.fi-sidebar-header {
+    @apply bg-teal-950;
+}
+
+/* logo color */
+.fi-logo {
+    @apply text-teal-50;
+}
+
+/* nav text default - softer contrast for better readability on dark purple */
+.fi-sidebar-group-label {
+    @apply text-slate-400;
+}
+
+.fi-sidebar-item-label,
+.fi-sidebar-item-icon {
+    @apply text-slate-200 hover:text-slate-200;
+}
+
+/* nav background hover - subtle lighter teal for hover state */
+.fi-sidebar-item .fi-sidebar-item-button {
+    @apply hover:bg-teal-900;
+}
+
+/* nav background active - slightly lighter than background but still dark */
+.fi-sidebar-item.fi-active.fi-sidebar-item-active .fi-sidebar-item-button {
+    @apply bg-teal-900;
+}
+
+/* nav text active - brighter text for active state */
+.fi-sidebar-item.fi-active.fi-sidebar-item-active .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active.fi-sidebar-item-active .fi-sidebar-item-icon {
+    @apply text-slate-200;
+}
