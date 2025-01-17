@@ -6,8 +6,10 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Auth\Register;
 use Filament\Support\Colors\Color;
+use Rmsramos\SystemInfo\SystemInfoPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -18,7 +20,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Rmsramos\SystemInfo\SystemInfoPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->registration(Register::class)
             ->colors([
                 'primary' => Color::Teal,
