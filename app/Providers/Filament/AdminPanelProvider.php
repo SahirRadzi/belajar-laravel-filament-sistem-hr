@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->passwordReset()
             ->registration(Register::class)
             ->colors([
                 'primary' => Color::Teal,

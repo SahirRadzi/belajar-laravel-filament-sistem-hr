@@ -12,7 +12,7 @@ class Login extends BasePage
 
         $this->form->fill([
             'email' => 'sahir.radzi@gmail.com',
-            'password' => '12345678',
+            'password' => '87654321',
             'remember' => true,
         ]);
     }
